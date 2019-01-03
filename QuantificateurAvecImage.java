@@ -1,4 +1,4 @@
-package V1;
+package compression;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -11,9 +11,9 @@ import javax.imageio.ImageIO;
 
 public class QuantificateurAvecImage {
 
-    private Integer[][] matrixEchelonnée;
-    private Integer[][] matrixQuantifiée;
-    private Double[][] imageCapté;
+    private Integer[][] matrixEchelonnee;
+    private Integer[][] matrixQuantifiee;
+    private Double[][] imageCaptee;
     private String urlEntre;
     private String urlSortie;
     private Integer lvlOfQuantification;
@@ -37,7 +37,7 @@ public class QuantificateurAvecImage {
 	    imageSize = w;
 	}
 
-	imageCapté = new Double[imageSize][imageSize];
+	imageCaptee = new Double[imageSize][imageSize];
 	System.out.println("width, height: " + w + ", " + h);
 
 	for (int i = 0; i < imageSize; i++) {
@@ -45,11 +45,11 @@ public class QuantificateurAvecImage {
 		// System.out.println("x,y: " + i + ", " + j);
 		int pixel = image.getRGB(j, i);
 		Color mycoor = new Color(pixel);
-		imageCapté[i][j] = (double) mycoor.getRed();
+		imageCaptee[i][j] = (double) mycoor.getRed();
 	    }
 	}
-	this.matrixEchelonnée = new Integer[w][h];
-	this.matrixQuantifiée = new Integer[w][h];
+	this.matrixEchelonnee = new Integer[w][h];
+	this.matrixQuantifiee = new Integer[w][h];
     }
 
     private String quantifier() {
@@ -59,13 +59,13 @@ public class QuantificateurAvecImage {
 	}
 	numVer = 0;
 	absoluteAll();
-	System.out.println("AbsoluteAll ☑");
+	System.out.println("AbsoluteAll +");
 	scaleTo();
-	System.out.println("ScaleTo ☑");
+	System.out.println("ScaleTo +");
 	leveliseTo();
-	System.out.println("LeveliseTo ☑");
+	System.out.println("LeveliseTo +");
 	// draw(matrixEchelonnée);
-	draw(matrixQuantifiée);
+	draw(matrixQuantifiee);
 	// return "---------------------------Matrice de base" +
 	// toStringofMatrix(imageCapté);
 	return "";
@@ -74,7 +74,7 @@ public class QuantificateurAvecImage {
     private void draw(Object[][] unematrix) {
 	numVer++;
 	try {
-	    BufferedImage image = new BufferedImage(imageCapté.length, imageCapté.length, BufferedImage.TYPE_INT_RGB);
+	    BufferedImage image = new BufferedImage(imageCaptee.length, imageCaptee.length, BufferedImage.TYPE_INT_RGB);
 	    for (int i = 0; i < unematrix.length; i++) {
 		for (int j = 0; j < unematrix[0].length; j++) {
 		    int a = (int) unematrix[i][j];
@@ -89,26 +89,26 @@ public class QuantificateurAvecImage {
     }
 
     private void absoluteAll() {
-	for (int i = 0; i < matrixQuantifiée.length; i++) {
-	    for (int j = 0; j < matrixQuantifiée[0].length; j++) {
-		imageCapté[i][j] = Math.abs(imageCapté[i][j]);
+	for (int i = 0; i < matrixQuantifiee.length; i++) {
+	    for (int j = 0; j < matrixQuantifiee[0].length; j++) {
+		imageCaptee[i][j] = Math.abs(imageCaptee[i][j]);
 	    }
 	}
     }
 
     private void scaleTo() {
 	Double Vmax = 0D;
-	for (int i = 0; i < imageCapté.length; i++) {
-	    for (int j = 0; j < imageCapté[0].length; j++) {
-		if (imageCapté[i][j] > Vmax)
-		    Vmax = imageCapté[i][j];
+	for (int i = 0; i < imageCaptee.length; i++) {
+	    for (int j = 0; j < imageCaptee[0].length; j++) {
+		if (imageCaptee[i][j] > Vmax)
+		    Vmax = imageCaptee[i][j];
 	    }
 	}
 	System.out.println("\nVMAX=" + Vmax);
 
-	for (int i = 0; i < imageCapté.length; i++) {
-	    for (int j = 0; j < imageCapté[0].length; j++) {
-		matrixEchelonnée[i][j] = (int) Math.round(imageCapté[i][j] / Vmax * 255);
+	for (int i = 0; i < imageCaptee.length; i++) {
+	    for (int j = 0; j < imageCaptee[0].length; j++) {
+		matrixEchelonnee[i][j] = (int) Math.round(imageCaptee[i][j] / Vmax * 255);
 	    }
 	}
     }
@@ -127,12 +127,12 @@ public class QuantificateurAvecImage {
 	}
 	System.out.println(levels);
 
-	for (int i = 0; i < imageCapté.length; i++) {
-	    for (int j = 0; j < imageCapté[0].length; j++) {
-		matrixQuantifiée[i][j] = 0;
+	for (int i = 0; i < imageCaptee.length; i++) {
+	    for (int j = 0; j < imageCaptee[0].length; j++) {
+		matrixQuantifiee[i][j] = 0;
 		for (int h = 0; h < levels.size(); h++) {
-		    if (matrixEchelonnée[i][j].intValue() >= levels.get(h)) {
-			matrixQuantifiée[i][j] = levels.get(h);
+		    if (matrixEchelonnee[i][j].intValue() >= levels.get(h)) {
+			matrixQuantifiee[i][j] = levels.get(h);
 		    }
 		}
 	    }

@@ -1,4 +1,4 @@
-package V1;
+package compression;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,17 +12,17 @@ import javax.imageio.ImageIO;
 
 public class QuantificateurAvecMatrice {
 
-    private Double[][] matrixDeBase;
-    private Integer[][] matrixEchelonnée;
-    private Integer[][] matrixQuantifiée;
+    private int[][] matrixDeBase;
+    private int[][] matrixEchelonnée;
+    private int[][] matrixQuantifiée;
     private Integer lvlOfQuantification;
     private Integer numVer;
 
-    public QuantificateurAvecMatrice(Double[][] matrix, Integer lvlOfQuantification) {
+    public QuantificateurAvecMatrice(int[][] matrix, Integer lvlOfQuantification) {
 	this.matrixDeBase = matrix;
 	this.lvlOfQuantification = lvlOfQuantification;
-	matrixEchelonnée = new Integer[8][8];
-	matrixQuantifiée = new Integer[8][8];
+	matrixEchelonnée = new int[8][8];
+	matrixQuantifiée = new int[8][8];
 	System.out.println(quantifier());
     }
 
@@ -38,7 +38,7 @@ public class QuantificateurAvecMatrice {
 		+ "\n---------------------------Matrice quantifiée" + toStringofMatrix(matrixQuantifiée);
     }
 
-    private void draw(Object[][] unematrix) {
+    private void draw(int[][] unematrix) {
 	numVer++;
 	try {
 	    BufferedImage image = new BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB);
@@ -50,7 +50,7 @@ public class QuantificateurAvecMatrice {
 		}
 	    }
 	    BufferedImage resized = resize(image, 500, 500);
-	    File output = new File("E:\\Bureau\\GrayScale" + numVer + ".jpg");
+	    File output = new File("C:\\Users\\casta\\Desktop\\GrayScale" + numVer + ".jpg");
 	    ImageIO.write((RenderedImage) resized, "jpg", output);
 	} catch (Exception e) {
 	}
@@ -74,24 +74,32 @@ public class QuantificateurAvecMatrice {
     }
 
     private void scaleTo() {
-	Double Vmax = 0D;
-	for (int i = 0; i < matrixDeBase.length; i++) {
-	    for (int j = 0; j < matrixDeBase.length; j++) {
-		if (matrixDeBase[i][j] > Vmax)
-		    Vmax = matrixDeBase[i][j];
-	    }
-	}
-	System.out.println("\nVMAX=" + Vmax);
+        Double Vmax = 0D;
+        int x = 0;
+        int y = 0;
+        for (int i = 0; i < matrixDeBase.length; i++) {
+            for (int j = 0; j < matrixDeBase.length; j++) {
+                if (matrixDeBase[i][j] > Vmax) {
+                    Vmax = (double) matrixDeBase[i][j];
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+        if (Vmax >= 255)
+            Vmax = (double) 255;
+        matrixDeBase[x][y] = (int) Math.round(Vmax);
+        System.out.println("\nVMAX=" + Vmax);
 
-	for (int i = 0; i < matrixDeBase.length; i++) {
-	    for (int j = 0; j < matrixDeBase.length; j++) {
-		matrixEchelonnée[i][j] = (int) Math.round(matrixDeBase[i][j] / Vmax * 255);
-	    }
-	}
+        for (int i = 0; i < matrixDeBase.length; i++) {
+            for (int j = 0; j < matrixDeBase.length; j++) {
+                matrixEchelonnée[i][j] = (int) Math.round(matrixDeBase[i][j] / Vmax * 255);
+            }
+        }
     }
 
     private void leveliseTo() {
-	Integer lengthOfEachLvl = 255 / (lvlOfQuantification - 1);
+	Integer lengthOfEachLvl = 255 / (lvlOfQuantification);
 	ArrayList<Integer> levels = new ArrayList<Integer>();
 	Integer totallenght = 0;
 	for (int k = 0; k < lvlOfQuantification; k++) {
@@ -108,7 +116,7 @@ public class QuantificateurAvecMatrice {
 	    for (int j = 0; j < matrixDeBase.length; j++) {
 		matrixQuantifiée[i][j] = 0;
 		for (int h = 0; h < levels.size(); h++) {
-		    if (matrixEchelonnée[i][j].intValue() >= levels.get(h)) {
+		    if (matrixEchelonnée[i][j] >= levels.get(h)) {
 			matrixQuantifiée[i][j] = levels.get(h);
 		    }
 		}
@@ -116,7 +124,7 @@ public class QuantificateurAvecMatrice {
 	}
     }
 
-    private String toStringofMatrix(Object[][] uneMatrix) {
+    private String toStringofMatrix(int[][] uneMatrix) {
 	String text = "";
 	for (int i = 0; i < uneMatrix.length; i++) {
 	    text += "\n";
@@ -126,4 +134,20 @@ public class QuantificateurAvecMatrice {
 	}
 	return text;
     }
+    
+    public int[][] getMatrice(){
+    	return this.matrixQuantifiée;
+    }
+    
+    public String getMatriceString(){
+    	String text="";
+    	for(int i = 0; i < matrixQuantifiée.length; i++){
+    		   for(int j = 0; j < matrixQuantifiée.length; j++){
+    			   text += matrixQuantifiée[i][j];
+    		   }
+    		}
+    	return text;
+    }
+    
+    
 }
